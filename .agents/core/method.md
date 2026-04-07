@@ -2,351 +2,186 @@
 
 ## Objetivo
 
-Definir como o sistema de desenvolvimento com IA opera, garantindo consistência, controle e previsibilidade em todas as etapas do projeto.
+Definir como o sistema de desenvolvimento com IA opera, garantindo:
 
-Este método estabelece:
+- consistência
+- controle
+- previsibilidade
+- rastreabilidade
 
-- ordem de execução;
-- responsabilidades dos agentes;
-- uso das skills;
-- critérios de progressão e bloqueio.
+Este método define:
+
+- fluxo de execução
+- responsabilidades dos agentes
+- uso de skills e workflows
+- regras de progressão
+- regras de bloqueio
+- fonte de verdade do projeto
 
 ---
 
 ## Princípios fundamentais
 
----
-
 ### 1. Intenção antes de implementação
-Nenhum código deve ser produzido antes da intenção estar clara e validada.
-
----
+Nenhum código é produzido sem definição validada.
 
 ### 2. Clareza antes de velocidade
-Velocidade não justifica ambiguidade.
-
----
+Ambiguidade nunca é aceitável.
 
 ### 3. Nada importante implícito
 Toda decisão relevante deve ser registrada.
 
----
-
 ### 4. Execução controlada
-Implementação só ocorre com contexto suficiente.
-
----
+Nenhuma execução ocorre sem contexto suficiente.
 
 ### 5. Validação obrigatória
-Nenhuma entrega segue adiante sem revisão.
-
----
+Nenhuma entrega avança sem revisão.
 
 ### 6. Progressão disciplinada
-O projeto deve evoluir por etapas, sem saltos.
+O projeto evolui por etapas definidas.
 
 ---
 
-## Local padrão dos artefatos do projeto
+## Fonte de verdade do sistema
 
-Todos os artefatos operacionais e documentais do projeto devem ser criados ou atualizados dentro da pasta:
+A única fonte confiável de estado do projeto é:
 
-`docs/`
+docs/
 
-Exemplos:
-- `docs/idea.md`
-- `docs/scope.md`
-- `docs/non_goals.md`
-- `docs/decision_log.md`
-- `docs/implementation_plan.md`
-- `docs/tasks.md`
-- `docs/architecture.md`
-- `docs/project_status.md`
-- `docs/handoff.md`
-- `docs/review_report.md`
+Chat NÃO é fonte de verdade.
 
-A pasta `.agents/` não deve ser usada para guardar saídas do projeto.
-Ela existe exclusivamente para armazenar o método, os agentes, as skills, os workflows, os templates e os índices do sistema.
+---
 
-Se o diretório `docs/` não existir, ele deve ser criado antes da geração dos artefatos.
+## Local dos artefatos
+
+Todos os artefatos devem existir em docs/:
+
+- idea.md
+- scope.md
+- non_goals.md
+- decision_log.md
+- implementation_plan.md
+- tasks.md
+- architecture.md
+- project_status.md
+- handoff.md
+- review_report.md
+
+---
+
+## Estrutura do sistema
+
+.agents/
+docs/
+GEMINI.md
+
+---
+
+## Regras do sistema
+
+### GEMINI.md
+Define regras globais.
+
+### Rules (.agents/rules/)
+Aplicam enforcement ativo:
+
+- pipeline_enforcement
+- context_enforcement
+- task_discipline
+- agent_control
+- execution_safety
+
+Se houver conflito:
+→ regras prevalecem
+
+---
+
+## Protocolo de ativação
+
+Agentes só podem ser ativados via:
+
+- workflow explícito
+- instrução direta do usuário
+
+Proibido:
+
+- troca automática de agente
+- mudança implícita de papel
+
+---
+
+## Continuidade entre sessões
+
+Usar workflow:
+
+resume_session
+
+Leitura obrigatória:
+
+- docs/project_status.md
+- docs/handoff.md
+- docs/tasks.md
+- docs/decision_log.md
+
+---
+
+## Onboarding de projeto existente
+
+Usar:
+
+onboard_existing_project
 
 ---
 
 ## Ciclo de vida do projeto
 
-O sistema opera em quatro fases:
+1. Discovery → clarify_intent
+2. Architecture → design_architecture
+3. Execution → implement_task
+4. Review → validate_delivery
 
 ---
 
-### 1. Definição
+## Fluxo
 
-Responsável:
-- Discovery
-
-Skill:
-- clarify_intent
-
-Resultado:
-
-- idea.md
-- scope.md
-- non_goals.md
-- decision_log.md (inicial)
-- implementation_plan.md (macro)
-- tasks.md (macro)
+Discovery → Architect → Executor → Reviewer → Orchestrator
 
 ---
 
-### 2. Estruturação
+## Orchestrator
 
-Responsável:
-- Architect
+Responsável por:
 
-Skill:
-- design_architecture
-
-Resultado:
-
-- architecture.md
-- decisões técnicas registradas
-
----
-
-### 3. Execução
-
-Responsável:
-- Executor
-
-Skill:
-- implement_task
-
-Resultado:
-
-- código implementado
-- handoff atualizado
-
----
-
-### 4. Validação
-
-Responsável:
-- Reviewer
-
-Skill:
-- validate_delivery
-
-Resultado:
-
-- review_report.md
-- decisão de aprovação ou reprovação
-
----
-
-## Fluxo operacional
-
-O fluxo padrão é:
-
-1. definir (clarify_intent)
-2. estruturar (design_architecture)
-3. executar (implement_task)
-4. validar (validate_delivery)
-
----
-
-## Orquestração
-
-Responsável:
-- Orchestrator
-
-Skill:
-- orchestrate_project
-
-Função:
-
-- determinar fase atual
-- identificar inconsistências
+- determinar estado
+- detectar inconsistências
 - decidir próxima ação
-- acionar agente e skill corretos
 
 ---
 
-## Regras de transição
+## Controle de tasks
+
+docs/tasks.md é a única fonte de verdade.
 
 ---
 
-### Definição → Estruturação
+## Controle de execução
 
-Só ocorre se:
+Fluxo obrigatório:
 
-- escopo estiver claro
-- não houver ambiguidade crítica
-- usuário tiver confirmado entendimento
+Executor → Handoff → Reviewer → Orchestrator
 
----
-
-### Estruturação → Execução
-
-Só ocorre se:
-
-- arquitetura estiver definida
-- não houver lacunas críticas
-- decisões estiverem registradas
-
----
-
-### Execução → Validação
-
-Só ocorre se:
-
-- task estiver implementada
-- handoff estiver registrado
-
----
-
-### Validação → Próxima ação
-
-Depende da decisão:
-
-- aprovado → próxima task
-- aprovado com observações → próxima task com atenção
-- reprovado → voltar para execução
-
----
-
-## Uso de skills
-
-Cada fase deve utilizar a skill correspondente.
-
-Não é permitido:
-
-- usar skill fora de contexto
-- pular skill obrigatória
-- misturar responsabilidades
-
----
-
-## Regras de controle
-
----
-
-### 1. Não pular etapas
-Nenhuma fase pode ser ignorada.
-
----
-
-### 2. Não avançar com inconsistência
-Se houver conflito ou lacuna:
-→ bloquear fluxo
-
----
-
-### 3. Não assumir progresso
-Estado do projeto deve ser validado por artefatos.
-
----
-
-### 4. Não misturar papéis
-Cada agente atua apenas em sua responsabilidade.
-
----
-
-## Comportamento em falha
-
----
-
-### Ambiguidade
-
-→ retornar para clarify_intent
-
----
-
-### Falta de arquitetura
-
-→ retornar para design_architecture
-
----
-
-### Falha de execução
-
-→ retornar para implement_task
-
----
-
-### Reprovação
-
-→ corrigir e reexecutar
-
----
-
-### Conflito entre artefatos
-
-→ registrar em decision_log.md  
-→ resolver antes de continuar
-
----
-
-## Critério de qualidade do sistema
-
-O método está sendo seguido corretamente quando:
-
-- não há ambiguidade crítica
-- decisões são rastreáveis
-- execução respeita arquitetura
-- validação é objetiva
-- fluxo é respeitado
-
----
-
-## Task Planning Model
-
-The project uses two task representations:
-
-### 1. docs/tasks.md (source of truth)
-
-- defines the official planning of the project
-- persists across sessions
-- must be manually maintained and updated
-
-### 2. Internal task artifacts (Antigravity)
-
-- used by the model during execution
-- may be simplified or optimized for reasoning
-- are session-scoped and not persistent
-
----
-
-## Alignment Rule
-
-docs/tasks.md is the single source of truth.
-
-Internal task artifacts must reflect docs/tasks.md.
-
-They must never override, replace, or redefine the planning.
-
----
-
-## Deviation Rule
-
-If a task needs to change:
-
-→ update docs/tasks.md  
-→ register the change in docs/decision_log.md  
-
-Never silently diverge.
+Sem qualquer etapa:
+→ BLOQUEAR
 
 ---
 
 ## Regra final
 
-Se houver dúvida entre:
-
-- avançar
-- ou garantir consistência
-
-Você deve garantir consistência.
+Se houver dúvida:
+→ garantir consistência
 
 ---
 
 ## Versão
 
-v1 — disciplinado, sequencial e orientado à integridade do projeto
+v2
