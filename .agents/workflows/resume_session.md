@@ -1,6 +1,7 @@
 ---
-description: Retoma uma nova sessão lendo os artefatos mínimos do projeto em docs/, reconstruindo o estado atual e definindo a próxima ação correta antes de qualquer continuidade.
+description: description: Retoma uma nova sessão lendo os artefatos mínimos do projeto em docs/, reconstruindo o estado atual e definindo a próxima ação correta antes de qualquer continuidade.
 ---
+
 
 # Resume Session Workflow
 
@@ -18,6 +19,38 @@ Garantir:
 
 ---
 
+## Regra crítica de ativação
+
+Este workflow é uma forma válida de ativar o agente Orchestrator.
+
+Ele NÃO autoriza:
+
+- auto-ativação fora do workflow
+- troca implícita de agente
+- continuidade automática após execução
+
+Se não for ativado explicitamente:
+
+→ não executar
+
+---
+
+## Integração com Rules
+
+Este workflow depende diretamente das seguintes Rules:
+
+- `context_enforcement` → força leitura de `docs/`
+- `task_discipline` → garante consistência com `tasks.md`
+- `pipeline_enforcement` → impede salto de fluxo
+- `agent_control` → impede troca de agente indevida
+
+Se qualquer Rule bloquear execução:
+
+→ interromper  
+→ não contornar  
+
+---
+
 ## Quando usar
 
 Use este workflow sempre que:
@@ -30,10 +63,10 @@ Use este workflow sempre que:
 
 ---
 
-## Etapa 1 — Ler os artefatos mínimos
+## Etapa 1 — Leitura obrigatória de artefatos
 
 **Agente:** Orchestrator  
-**Skill:** orchestrate_project
+**Skill:** orchestrate_project  
 
 Ler obrigatoriamente em `docs/`:
 
@@ -42,7 +75,7 @@ Ler obrigatoriamente em `docs/`:
 - `tasks.md`
 - `decision_log.md`
 
-Ler também, se necessário para contexto:
+Se necessário:
 
 - `idea.md`
 - `scope.md`
@@ -51,170 +84,194 @@ Ler também, se necessário para contexto:
 - `architecture.md`
 - `review_report.md`
 
-Regra obrigatória:
+---
 
-- não prosseguir sem antes ler os artefatos mínimos
-- não depender do histórico do chat como fonte principal de verdade
+### Regras obrigatórias
+
+- não prosseguir sem leitura mínima
+- não usar chat como fonte de verdade
+- não inferir contexto não documentado
 
 ---
 
-## Etapa 2 — Reconstruir o estado atual
+## Etapa 2 — Reconstrução de estado
 
-**Agente:** Orchestrator  
-**Skill:** orchestrate_project
-
-Ações:
-
-- identificar a fase atual do projeto
-- identificar a última task trabalhada
-- identificar o último handoff válido
-- identificar a última decisão relevante
-- identificar se existe revisão pendente
-- identificar se existe bloqueio registrado
-
-Gerar um resumo curto cobrindo:
+Identificar:
 
 - fase atual
 - última task concluída
-- task atual ou próxima task
+- task atual ou próxima
+- último handoff válido
+- última decisão relevante
+- existência de revisão pendente
+- existência de bloqueio
+
+---
+
+### Saída obrigatória
+
+Gerar resumo curto contendo:
+
+- fase atual
+- última task
+- próxima task
 - bloqueios
 - próximo passo provável
 
 ---
 
-## Etapa 3 — Detectar inconsistências
-
-**Agente:** Orchestrator  
-**Skill:** orchestrate_project
+## Etapa 3 — Detecção de inconsistências (HARD RULE)
 
 Verificar:
 
-- `project_status.md` é coerente com `tasks.md`?
-- `handoff.md` corresponde à última task trabalhada?
-- existe `review_report.md` pendente de ação?
-- existe divergência entre progresso real e estado documentado?
-
-Se houver inconsistência:
-→ registrar a inconsistência
-→ bloquear avanço
-→ propor correção antes de seguir
+- project_status.md vs tasks.md
+- existência de handoff da última execução
+- existência de review pendente
+- divergência entre execução e documentação
 
 ---
 
-## Etapa 4 — Definir a próxima ação correta
+### Regra crítica
 
-**Agente:** Orchestrator  
-**Skill:** orchestrate_project
+Se houver inconsistência:
 
-Com base nos artefatos, decidir uma única próxima ação:
+→ BLOQUEAR  
+→ NÃO avançar  
+→ reportar explicitamente  
 
-Exemplos:
+---
+
+## Etapa 4 — Definição da próxima ação
+
+Selecionar exatamente UMA ação:
 
 - continuar Discovery
 - continuar Architect
-- executar a próxima task
-- validar a última entrega
-- corrigir inconsistência documental
-- retornar ao onboarding de projeto existente
-
-Regra obrigatória:
-
-- não sugerir múltiplos caminhos ao mesmo tempo
-- escolher a ação mais segura e coerente com o estado atual
+- executar próxima task
+- validar entrega
+- corrigir inconsistência
+- retornar onboarding
 
 ---
 
-## Etapa 5 — Preparar retomada
+### Regras obrigatórias
 
-**Agente:** Orchestrator  
-**Skill:** orchestrate_project
-
-Ações:
-
-- indicar qual agente deve atuar a seguir
-- indicar qual skill deve ser usada
-- indicar quais artefatos são relevantes para a próxima etapa
-- preparar contexto mínimo de retomada
+- não sugerir múltiplas ações
+- não escolher caminho ambíguo
+- priorizar segurança do fluxo
 
 ---
 
-## Etapa 6 — Confirmar retomada
+## Etapa 5 — Preparação de retomada
 
-**Agente:** Orchestrator  
-**Skill:** orchestrate_project
+Definir:
+
+- agente a ser ativado
+- skill a ser usada
+- artefatos necessários
+- objetivo da próxima etapa
+
+---
+
+## Etapa 6 — Confirmação obrigatória
 
 Perguntar:
 
-> A sessão foi retomada com sucesso. Deseja prosseguir com esta próxima ação?
+> A sessão foi retomada com sucesso. Deseja prosseguir com a próxima ação?
 
-Não avançar automaticamente sem confirmação.
+---
+
+### Regra crítica
+
+→ não executar automaticamente  
+→ aguardar confirmação  
 
 ---
 
 ## Saída esperada
 
-Ao final deste workflow, deve existir:
+Ao final:
 
-- um resumo confiável do estado atual do projeto
-- uma próxima ação clara
-- um agente definido
-- uma skill definida
-- uma retomada segura da pipeline principal
+- estado atual reconstruído
+- fase definida
+- próxima ação clara
+- agente definido
+- skill definida
+- retomada segura
 
 ---
 
 ## Regras obrigatórias
 
-### 1. `docs/` é a fonte principal de verdade
-A retomada deve se basear nos artefatos persistidos, não na memória do chat.
+### 1. docs/ é a fonte única de verdade
 
-### 2. Não assumir continuidade implícita
-Toda retomada deve reconstruir contexto explicitamente.
+---
 
-### 3. Não avançar com inconsistência
-Se houver divergência entre artefatos, bloquear antes de seguir.
+### 2. Não assumir continuidade
 
-### 4. Não pular a leitura mínima
-`project_status.md`, `handoff.md`, `tasks.md` e `decision_log.md` são leitura obrigatória.
+---
 
-### 5. Não executar diretamente
-Este workflow prepara a retomada. Ele não substitui o workflow operacional seguinte.
+### 3. Sem consistência → sem avanço
+
+---
+
+### 4. Leitura mínima obrigatória
+
+---
+
+### 5. Este workflow NÃO executa
+
+Ele apenas:
+
+- reconstrói contexto
+- define próximo passo
 
 ---
 
 ## Situações especiais
 
-### Não existe `docs/project_status.md`
-→ reconstruir o estado a partir de `tasks.md`, `handoff.md` e `decision_log.md`
-→ registrar necessidade de normalização
+---
 
-### Não existe `docs/handoff.md`
-→ usar `tasks.md` + `review_report.md` + `project_status.md`
-→ registrar ausência de handoff como risco operacional
+### Sem project_status.md
 
-### Não existe `docs/tasks.md`
-→ bloquear continuação
-→ retornar ao Orchestrator para reconstrução de planejamento
-
-### O projeto veio de fora da pipeline
-→ usar `onboard_existing_project` em vez de `resume_session`
+→ reconstruir via tasks + handoff  
+→ registrar problema  
 
 ---
 
-## Critérios de saída
+### Sem handoff.md
 
-O workflow só pode encerrar quando:
+→ usar tasks + review  
+→ registrar risco  
 
-- o estado atual foi reconstruído
-- a fase atual foi identificada
-- a próxima ação foi definida
-- não há inconsistência crítica aberta
-- o usuário confirmou a retomada
+---
+
+### Sem tasks.md
+
+→ BLOQUEAR  
+→ retornar ao Orchestrator  
+
+---
+
+### Projeto externo
+
+→ usar onboard_existing_project  
+
+---
+
+## Critério de saída
+
+Encerrar apenas quando:
+
+- estado reconstruído
+- inconsistências resolvidas ou registradas
+- próxima ação definida
+- usuário confirmou
 
 ---
 
 ## Regra final
 
-Nunca continue uma sessão nova como se o contexto ainda estivesse intacto.
+Nunca retome um projeto assumindo contexto.
 
-Primeiro reconstrua a verdade atual do projeto.
+Sempre reconstrua a verdade a partir de `docs/`.

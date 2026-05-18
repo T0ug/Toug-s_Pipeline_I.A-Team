@@ -27,7 +27,7 @@ Define como a IA funciona.
 ### 2. Estado do projeto (`docs/`)
 Define o que o projeto é.
 
-### 3. Regras (`GEMINI.md` + `rules/`)
+### 3. Regras (`AGENTS.md` + `rules/`)
 Define como a IA deve se comportar.
 
 ---
@@ -45,7 +45,7 @@ Define como a IA deve se comportar.
   rules/
 
 docs/
-GEMINI.md
+AGENTS.md
 ```
 
 ---
@@ -54,7 +54,7 @@ GEMINI.md
 
 Para que a pipeline funcione corretamente, é obrigatório:
 
-### 1. Adicionar o GEMINI.md no root do projeto
+### 1. Adicionar o AGENTS.md no root do projeto
 
 Este arquivo contém as regras globais do sistema.
 
@@ -244,7 +244,7 @@ docs/review_report.md
 
 ## 🧠 Regras do sistema
 
-### GEMINI.md
+### AGENTS.md
 
 Define as regras globais do sistema:
 

@@ -329,6 +329,31 @@ Agentes não devem explicar conceitos básicos sem necessidade.
 
 ---
 
+## Integração com Rules
+
+A pasta `.agents/rules/` funciona como camada ativa de enforcement destas convenções.
+
+As Rules não substituem estas convenções.
+Elas reforçam, endurecem e tornam obrigatório o comportamento definido aqui.
+
+Rules esperadas do sistema:
+
+- `pipeline_enforcement.md`
+- `context_enforcement.md`
+- `task_discipline.md`
+- `agent_control.md`
+- `execution_safety.md`
+
+Se houver conflito entre um comportamento espontâneo do modelo e uma Rule ativa:
+
+→ a Rule prevalece
+
+Se houver conflito entre convenções descritivas e Rules ativas:
+
+→ aplicar a interpretação mais restritiva e segura
+
+---
+
 ## Convenções de qualidade
 
 ---
@@ -339,7 +364,8 @@ Um agente está operando corretamente quando:
 - não há ambiguidade crítica;
 - não há contradição com artefatos;
 - decisões deixam rastro;
-- execução ocorre com contexto suficiente.
+- execução ocorre com contexto suficiente;
+- o comportamento está alinhado com as Rules ativas do sistema.
 
 ---
 
@@ -356,4 +382,4 @@ o agente deve escolher clareza.
 
 ## Versão
 
-v1 — inicial, evolutiva com base no uso real.
+v2 — integrada com enforcement via Rules e orientada ao uso real.
