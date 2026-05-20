@@ -33,7 +33,8 @@ Before any action, always read:
 
 If context is missing or unclear:
 → stop and ask
-(If the project is being submitted in the onboard_existing_project.md workflow, this rule can be avoided)
+
+(If the project is being submitted in the onboard_existing_project.md workflow or if it is a project being initialized, this rule can be ignored)
 
 ---
 

@@ -3,19 +3,35 @@
 ## Objetivo
 
 Definir como o sistema de desenvolvimento com IA opera, garantindo:
+<<<<<<< HEAD
+=======
+
+- consistência
+- controle
+- previsibilidade
+- rastreabilidade
+>>>>>>> 49da42c37979f503ae2ddc783a163af3e3d018f5
 
 - consistência
 - controle
 - previsibilidade
 - rastreabilidade
 
-Este método estabelece:
+<<<<<<< HEAD
+Este método define:
 
+- fluxo de execução
+- responsabilidades dos agentes
+- uso de skills e workflows
+- regras de progressão
+- regras de bloqueio
+=======
 - ordem de execução
 - responsabilidades dos agentes
 - uso das skills
 - critérios de progressão e bloqueio
 - regras de ativação
+>>>>>>> 49da42c37979f503ae2ddc783a163af3e3d018f5
 - fonte de verdade do projeto
 
 ---
@@ -23,32 +39,22 @@ Este método estabelece:
 ## Princípios fundamentais
 
 ### 1. Intenção antes de implementação
-Nenhum código deve ser produzido antes da intenção estar clara e validada.
-
----
+Nenhum código é produzido sem definição validada.
 
 ### 2. Clareza antes de velocidade
-Velocidade não justifica ambiguidade.
-
----
+Ambiguidade nunca é aceitável.
 
 ### 3. Nada importante implícito
 Toda decisão relevante deve ser registrada.
 
----
-
 ### 4. Execução controlada
-Implementação só ocorre com contexto suficiente.
-
----
+Nenhuma execução ocorre sem contexto suficiente.
 
 ### 5. Validação obrigatória
-Nenhuma entrega segue adiante sem revisão.
-
----
+Nenhuma entrega avança sem revisão.
 
 ### 6. Progressão disciplinada
-O projeto deve evoluir por etapas, sem saltos.
+O projeto evolui por etapas definidas.
 
 ---
 
@@ -62,16 +68,71 @@ Chat NÃO é fonte de verdade.
 
 ---
 
+<<<<<<< HEAD
+## Local dos artefatos
+
+Todos os artefatos devem existir em docs/:
+
+- idea.md
+- scope.md
+- non_goals.md
+- decision_log.md
+- implementation_plan.md
+- tasks.md
+- architecture.md
+- project_status.md
+- handoff.md
+- review_report.md
+=======
 ## Local padrão dos artefatos
 
 Todos os artefatos devem ser criados em:
 
 docs/
+>>>>>>> 49da42c37979f503ae2ddc783a163af3e3d018f5
 
 ---
 
 ## Estrutura do sistema
 
+<<<<<<< HEAD
+.agents/
+docs/
+GEMINI.md
+
+---
+
+## Regras do sistema
+
+### GEMINI.md
+Define regras globais.
+
+### Rules (.agents/rules/)
+Aplicam enforcement ativo:
+
+- pipeline_enforcement
+- context_enforcement
+- task_discipline
+- agent_control
+- execution_safety
+
+Se houver conflito:
+→ regras prevalecem
+
+---
+
+## Protocolo de ativação
+
+Agentes só podem ser ativados via:
+
+- workflow explícito
+- instrução direta do usuário
+
+Proibido:
+
+- troca automática de agente
+- mudança implícita de papel
+=======
 .agents/  
 docs/  
 GEMINI.md  
@@ -101,11 +162,32 @@ Autoridade final: usuário
 
 Se não houver comando:
 → NÃO executar
+>>>>>>> 49da42c37979f503ae2ddc783a163af3e3d018f5
 
 ---
 
 ## Continuidade entre sessões
 
+<<<<<<< HEAD
+Usar workflow:
+
+resume_session
+
+Leitura obrigatória:
+
+- docs/project_status.md
+- docs/handoff.md
+- docs/tasks.md
+- docs/decision_log.md
+
+---
+
+## Onboarding de projeto existente
+
+Usar:
+
+onboard_existing_project
+=======
 Usar:
 
 resume_session
@@ -179,11 +261,22 @@ start_project → Discovery → Architect → Executor → Reviewer
 Fluxo:
 
 onboard_existing_project → Orchestrator → fluxo normal
+>>>>>>> 49da42c37979f503ae2ddc783a163af3e3d018f5
 
 ---
 
 ## Ciclo de vida do projeto
 
+<<<<<<< HEAD
+1. Discovery → clarify_intent
+2. Architecture → design_architecture
+3. Execution → implement_task
+4. Review → validate_delivery
+
+---
+
+## Fluxo
+=======
 1. Discovery → clarify_intent  
 2. Architecture → design_architecture  
 3. Execution → implement_task  
@@ -192,31 +285,50 @@ onboard_existing_project → Orchestrator → fluxo normal
 ---
 
 ## Fluxo operacional
+>>>>>>> 49da42c37979f503ae2ddc783a163af3e3d018f5
 
 Discovery → Architect → Executor → Reviewer → Orchestrator
 
 ---
 
+<<<<<<< HEAD
+## Orchestrator
+
+Responsável por:
+=======
 ## Orquestração
 
 Responsável:
 - Orchestrator
 
 Função:
+>>>>>>> 49da42c37979f503ae2ddc783a163af3e3d018f5
 
 - determinar estado
 - detectar inconsistências
 - decidir próxima ação
+<<<<<<< HEAD
+=======
 - indicar agente
+>>>>>>> 49da42c37979f503ae2ddc783a163af3e3d018f5
 
 ---
 
-## Regras de transição
+## Controle de tasks
+
+docs/tasks.md é a única fonte de verdade.
 
 ---
 
-### Definição → Estruturação
+## Controle de execução
 
+<<<<<<< HEAD
+Fluxo obrigatório:
+
+Executor → Handoff → Reviewer → Orchestrator
+
+Sem qualquer etapa:
+=======
 - escopo claro
 - sem ambiguidade
 - confirmação do usuário
@@ -315,10 +427,17 @@ Fluxo obrigatório:
 Executor → Handoff → Reviewer → Orchestrator
 
 Se qualquer etapa faltar:
+>>>>>>> 49da42c37979f503ae2ddc783a163af3e3d018f5
 → BLOQUEAR
 
 ---
 
+<<<<<<< HEAD
+## Regra final
+
+Se houver dúvida:
+→ garantir consistência
+=======
 ## Integração com Rules
 
 Rules garantem:
@@ -362,9 +481,14 @@ Se houver dúvida entre:
 - ou seguir docs/tasks.md  
 
 → seguir docs/tasks.md  
+>>>>>>> 49da42c37979f503ae2ddc783a163af3e3d018f5
 
 ---
 
 ## Versão
 
+<<<<<<< HEAD
+v2
+=======
 v4 — com onboarding integrado e pipeline completa
+>>>>>>> 49da42c37979f503ae2ddc783a163af3e3d018f5
