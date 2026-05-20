@@ -1,5 +1,5 @@
 ---
-description: Execute a task following the full pipeline: implementation, handoff, validation, and orchestration update. Enforces strict discipline and evidence-based progression.
+description: "Execute a task following the full pipeline: implementation, handoff, validation, and orchestration update. Enforces strict discipline and evidence-based progression."
 ---
 
 # Execute Task Workflow

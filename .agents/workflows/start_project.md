@@ -1,5 +1,5 @@
 ---
-description: Inicia um projeto a partir de uma ideia inicial usando Discovery + clarify_intent, garantindo definição completa antes de avançar.
+description: "Inicia um projeto a partir de uma ideia inicial usando Discovery + clarify_intent, garantindo definição completa antes de avançar."
 ---
 
 # Start Project Workflow

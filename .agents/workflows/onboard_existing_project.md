@@ -1,5 +1,5 @@
 ---
-description: Analisa um projeto já existente com Project Research + research_existing_project para reconstruir contexto, validar a intenção atual e devolver o projeto à pipeline principal.
+description: "Analisa um projeto já existente com Project Research + research_existing_project para reconstruir contexto, validar a intenção atual e devolver o projeto à pipeline principal."
 ---
 
 # Onboard Existing Project Workflow

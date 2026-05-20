@@ -1,5 +1,5 @@
 ---
-description: Define a arquitetura do projeto com Architect + design_architecture, garantindo decisões estruturais claras antes da execução.
+description: "Define a arquitetura do projeto com Architect + design_architecture, garantindo decisões estruturais claras antes da execução."
 ---
 
 # Structure Project Workflow

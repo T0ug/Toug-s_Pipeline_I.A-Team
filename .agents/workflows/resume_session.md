@@ -1,5 +1,5 @@
 ---
-description: description: Retoma uma nova sessão lendo os artefatos mínimos do projeto em docs/, reconstruindo o estado atual e definindo a próxima ação correta antes de qualquer continuidade.
+description: "description: Retoma uma nova sessão lendo os artefatos mínimos do projeto em docs/, reconstruindo o estado atual e definindo a próxima ação correta antes de qualquer continuidade."
 ---
 
 
