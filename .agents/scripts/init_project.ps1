@@ -154,4 +154,20 @@ Ensure-File "docs/project/decision_log.md" @"
 No global decisions recorded yet.
 "@
 
+Ensure-File "docs/project/team_plan.md" @"
+# Team Plan
+
+## Rules
+
+- One task per branch.
+- One task per PR.
+- Claim a task before implementation.
+- Treat `docs/project/` as protected shared memory.
+
+## Work Map
+
+| Task | Status | Stage | Owner | Branch | Folder | Dependencies |
+| --- | --- | --- | --- | --- | --- | --- |
+"@
+
 Write-Host "Project docs initialized."

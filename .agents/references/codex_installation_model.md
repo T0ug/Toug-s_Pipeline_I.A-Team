@@ -70,6 +70,9 @@ Prefer scripts when creating or validating pipeline artifacts:
 
 ```powershell
 ./.agents/scripts/pipeline.ps1 status -Root .
+./.agents/scripts/pipeline.ps1 onboard -Root .
+./.agents/scripts/pipeline.ps1 plan-team -Root .
+./.agents/scripts/pipeline.ps1 claim -Root . -Task TASK-001 -Owner "name"
 ./.agents/scripts/init_project.ps1 -Root .
 ./.agents/scripts/init_task.ps1 -Root . -Id TASK-001 -Name "first task"
 ./.agents/scripts/validate_project.ps1 -Root .

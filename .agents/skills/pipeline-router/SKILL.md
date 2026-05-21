@@ -27,7 +27,8 @@ Route natural-language requests like this:
 | --- | --- |
 | "qual o estado atual da pipeline?", "onde paramos?", "qual task esta ativa?" | Use `resume-session`; run `pipeline.ps1 status`. |
 | "prepare este projeto", "iniciar pipeline", new repo setup | Use `structure-project`; run `pipeline.ps1 init-project`. |
-| Existing codebase without docs | Use `onboard-existing-project`; run `pipeline.ps1 init-project` if canonical docs are missing. |
+| Existing codebase, missing docs, docs in subfolders, non-standard docs, or advanced project without pipeline memory | Use `onboard-existing-project`; run `pipeline.ps1 onboard` before creating tasks. |
+| Team work, multiple developers, dividir tarefas, parallel work, Git branches, PR planning | Use `team-planning`; run `pipeline.ps1 plan-team`. |
 | "crie uma task", "comece X", clear new work | Run `pipeline.ps1 start -Name "..."`; then use `execute-task` if implementation was requested. |
 | "implemente", "corrija", "faça", code change | Run `pipeline.ps1 before-work`; then use `execute-task`. |
 | "revisa", "valide", "pode aprovar?" | Run `pipeline.ps1 review`; then use `review-delivery`. |
@@ -45,6 +46,10 @@ If the user asks for new clear work and no matching active task exists, create a
 Use a concise task name based on the user's request.
 
 Do not create a task automatically when the request is ambiguous, risky, architectural, or asks for discussion only.
+
+If the repository already has code but no canonical pipeline docs, do not create implementation tasks first. Route to `onboard-existing-project` and reconstruct project state from the repository.
+
+If the user mentions team work, multiple developers, branch division, or parallel work, do not focus on only one next task. Route to `team-planning` and update `docs/project/team_plan.md`.
 
 ## Implementation
 

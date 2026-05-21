@@ -57,6 +57,7 @@ Papeis como Executor, Reviewer e Orchestrator continuam existindo como fases do 
 |-- .agents/
 |   |-- skills/
 |   |   |-- pipeline-router/
+|   |   |-- team-planning/
 |   |   |-- execute-task/
 |   |   |-- review-delivery/
 |   |   |-- resume-session/
@@ -81,6 +82,7 @@ docs/project/project_status.md
 docs/project/backlog.md
 docs/project/architecture.md
 docs/project/decision_log.md
+docs/project/team_plan.md
 ```
 
 Cada task tem sua propria pasta:
@@ -124,6 +126,30 @@ comece uma task para login com Google
 ```
 
 O Codex deve rotear automaticamente para a skill correta e usar scripts quando pratico.
+
+### `team-planning`
+
+Prepara o mapa de trabalho para equipe.
+
+Uso esperado:
+
+```txt
+temos 3 pessoas trabalhando com Codex, organize as tasks
+```
+
+O Codex deve atualizar:
+
+```txt
+docs/project/team_plan.md
+```
+
+E considerar:
+
+- owner da task;
+- branch sugerida;
+- dependencias;
+- tarefas paralelizaveis;
+- uma task por PR.
 
 ### `structure-project`
 
@@ -193,6 +219,10 @@ Acoes disponiveis:
 ```txt
 status
 init-project
+onboard
+scan
+plan-team
+claim
 start
 before-work
 after-work
@@ -204,6 +234,9 @@ validate
 Exemplos:
 
 ```powershell
+./.agents/scripts/pipeline.ps1 onboard -Root .
+./.agents/scripts/pipeline.ps1 plan-team -Root . -Members "Ana,Bruno,Camila"
+./.agents/scripts/pipeline.ps1 claim -Root . -Task TASK-001 -Owner "Ana"
 ./.agents/scripts/pipeline.ps1 start -Root . -Name "login com Google"
 ./.agents/scripts/pipeline.ps1 before-work -Root . -Task TASK-001
 ./.agents/scripts/pipeline.ps1 after-work -Root . -Task TASK-001
@@ -317,11 +350,22 @@ Use onboard-existing-project.
 
 O Codex deve:
 
-1. inspecionar estrutura, README, configs, testes e codigo principal;
-2. criar ou atualizar `docs/project/`;
-3. criar tasks iniciais apenas quando houver trabalho ativo claro;
-4. rodar `validate_project.ps1`;
-5. recomendar a proxima acao segura.
+1. varrer o repositorio inteiro antes de criar tasks;
+2. encontrar docs mesmo em subpastas ou fora do padrao;
+3. inspecionar README, configs, manifests, testes, codigo, migrations, CI e deploy;
+4. gerar `docs/project/onboarding_research.md` e `docs/project/code_map.md`;
+5. criar ou atualizar `docs/project/` com fatos descobertos;
+6. criar tasks apenas para trabalho ativo, lacunas reais ou pedido explicito do usuario;
+7. rodar `validate_project.ps1`;
+8. recomendar a proxima acao segura.
+
+Comando usado pelo Codex quando pratico:
+
+```powershell
+./.agents/scripts/pipeline.ps1 onboard -Root .
+```
+
+Regra importante: projeto existente nao deve ser tratado como projeto novo so porque nao tem docs canonicos.
 
 ### Nova sessao
 
@@ -393,12 +437,21 @@ Depois rode:
 
 Para equipes usando Codex em paralelo:
 
+- manter `docs/project/team_plan.md` atualizado;
+- fazer claim de task antes de implementar;
 - uma task por branch;
 - uma task por PR;
 - evitar duas pessoas trabalhando na mesma task ao mesmo tempo;
 - tratar `docs/project/` como memoria compartilhada protegida;
 - registrar execucao em `handoff.md`;
 - registrar validacao em `review.md`.
+
+Comandos usados pelo Codex quando pratico:
+
+```powershell
+./.agents/scripts/pipeline.ps1 plan-team -Root . -Members "Ana,Bruno,Camila"
+./.agents/scripts/pipeline.ps1 claim -Root . -Task TASK-001 -Owner "Ana"
+```
 
 O template de PR fica em:
 

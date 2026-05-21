@@ -24,6 +24,7 @@ docs/project/project_status.md
 docs/project/backlog.md
 docs/project/architecture.md
 docs/project/decision_log.md
+docs/project/team_plan.md
 ```
 
 Canonical task folder:
@@ -119,6 +120,7 @@ Use the skills in `.agents/skills/` when their descriptions match the request.
 Primary skills:
 
 - `pipeline-router`: default entrypoint for status, planning, task creation, implementation, review, validation, onboarding, and next-action decisions.
+- `team-planning`: plan parallel work, ownership, branches, PR boundaries, and task claiming for teams.
 - `execute-task`: implement a defined task using this pipeline.
 - `review-delivery`: validate a completed task.
 - `resume-session`: reconstruct state before continuing unclear or resumed work.
@@ -135,6 +137,9 @@ Prefer scripts over hand-created boilerplate when they are available:
 
 ```powershell
 ./.agents/scripts/pipeline.ps1 status -Root .
+./.agents/scripts/pipeline.ps1 onboard -Root .
+./.agents/scripts/pipeline.ps1 plan-team -Root .
+./.agents/scripts/pipeline.ps1 claim -Root . -Task TASK-001 -Owner "name"
 ./.agents/scripts/init_project.ps1 -Root .
 ./.agents/scripts/init_task.ps1 -Root . -Id TASK-001 -Name "task name"
 ./.agents/scripts/validate_project.ps1 -Root .
@@ -143,6 +148,10 @@ Prefer scripts over hand-created boilerplate when they are available:
 ```
 
 Use scripts to create repeatable structure and to verify pipeline contracts. If a script fails, treat the failure as a blocker unless the user explicitly chooses to proceed.
+
+For existing repositories without canonical docs, or with docs outside the expected structure, run onboarding research before creating tasks. Use `pipeline-router`, `onboard-existing-project`, and `pipeline.ps1 onboard` to inspect the repository first.
+
+For team work, do not optimize for only one next task. Build or update `docs/project/team_plan.md`, identify parallelizable tasks, and require task ownership before implementation.
 
 ## Safety
 

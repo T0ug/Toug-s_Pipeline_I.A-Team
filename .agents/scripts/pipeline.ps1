@@ -1,13 +1,16 @@
 param(
   [Parameter(Position = 0)]
-  [ValidateSet("status", "init-project", "start", "before-work", "after-work", "review", "complete", "validate")]
+  [ValidateSet("status", "init-project", "onboard", "scan", "plan-team", "claim", "start", "before-work", "after-work", "review", "complete", "validate")]
   [string]$Action = "status",
 
   [string]$Root = ".",
   [string]$Task = "",
   [string]$Name = "",
   [string]$Id = "",
-  [string]$Type = "chore"
+  [string]$Type = "chore",
+  [string]$Owner = "",
+  [string]$Members = "",
+  [string]$Branch = ""
 )
 
 $ErrorActionPreference = "Stop"
@@ -129,6 +132,39 @@ switch ($Action) {
   "init-project" {
     Invoke-PipelineScript "init_project.ps1" @{ Root = $rootPath.Path }
     Invoke-PipelineScript "validate_project.ps1" @{ Root = $rootPath.Path }
+    break
+  }
+
+  "scan" {
+    Invoke-PipelineScript "scan_project.ps1" @{ Root = $rootPath.Path }
+    break
+  }
+
+  "onboard" {
+    Invoke-PipelineScript "scan_project.ps1" @{ Root = $rootPath.Path }
+    Invoke-PipelineScript "init_project.ps1" @{ Root = $rootPath.Path }
+    Invoke-PipelineScript "scan_project.ps1" @{ Root = $rootPath.Path }
+    Invoke-PipelineScript "plan_team.ps1" @{ Root = $rootPath.Path; Members = $Members }
+    Invoke-PipelineScript "validate_project.ps1" @{ Root = $rootPath.Path }
+    break
+  }
+
+  "plan-team" {
+    Invoke-PipelineScript "plan_team.ps1" @{ Root = $rootPath.Path; Members = $Members }
+    break
+  }
+
+  "claim" {
+    $resolvedTask = Resolve-Task $Task
+    if ([string]::IsNullOrWhiteSpace($Owner)) {
+      throw "The claim action requires -Owner."
+    }
+    Invoke-PipelineScript "claim_task.ps1" @{
+      Root = $rootPath.Path
+      Task = $resolvedTask
+      Owner = $Owner
+      Branch = $Branch
+    }
     break
   }
 

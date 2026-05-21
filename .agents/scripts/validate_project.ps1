@@ -61,6 +61,7 @@ Test-RequiredFile "docs/project/project_status.md"
 Test-RequiredFile "docs/project/backlog.md"
 Test-RequiredFile "docs/project/architecture.md"
 Test-RequiredFile "docs/project/decision_log.md"
+Test-RequiredFile "docs/project/team_plan.md"
 
 Test-ForbiddenPath "docs/tasks.md"
 Test-ForbiddenPath "docs/project_status.md"

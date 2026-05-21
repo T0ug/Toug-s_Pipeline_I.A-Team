@@ -145,7 +145,8 @@ foreach ($file in @(
   "docs/project/project_status.md",
   "docs/project/backlog.md",
   "docs/project/architecture.md",
-  "docs/project/decision_log.md"
+  "docs/project/decision_log.md",
+  "docs/project/team_plan.md"
 )) {
   $path = Join-Path $rootPath $file
   if (Test-Path -LiteralPath $path -PathType Leaf) {
