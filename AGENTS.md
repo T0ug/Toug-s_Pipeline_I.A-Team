@@ -1,299 +1,163 @@
 # AGENTS.md
 
-# Purpose
+This repository uses a Codex-native, task-scoped development pipeline.
 
-This repository uses a structured AI-assisted development pipeline.
+These instructions are always active when this file is installed at the repository root.
 
-The goal is NOT only code generation.
+## Source Of Truth
 
-The goal is:
-- controlled execution
-- architectural consistency
-- traceability
-- reproducibility
-- task isolation
-- reviewability
-- safe collaboration between humans and AI agents
+Chat is not the project source of truth.
 
-This repository is designed for multi-developer and multi-agent collaboration.
-
-AI agents must follow the pipeline rules strictly.
-
----
-
-# Core Philosophy
-
-The project is divided into:
+Use repository artifacts:
 
 ```txt
-1. Permanent project memory
-2. Task execution memory
-3. Release history
+docs/project/   permanent project memory
+docs/tasks/     task execution memory
+docs/releases/  delivery snapshots
+docs/archive/   inactive historical material
 ```
 
-Correct mental model:
+Canonical project files:
 
 ```txt
-Branch = temporary implementation vehicle
-Task = historical unit of work
-Project docs = permanent project memory
-Release docs = delivery snapshot
+docs/project/project_status.md
+docs/project/backlog.md
+docs/project/architecture.md
+docs/project/decision_log.md
 ```
 
-Branches are temporary.
-
-Tasks are historical.
-
-Never organize documentation by branch name.
-
-Always organize documentation by task identity.
-
----
-
-# Documentation Structure
-
-```txt
-docs/
-├── project/
-│   ├── vision.md
-│   ├── scope.md
-│   ├── architecture.md
-│   ├── database.md
-│   ├── api.md
-│   ├── security.md
-│   ├── project_status.md
-│   ├── decision_log.md
-│   └── backlog.md
-│
-├── tasks/
-│   ├── TASK-001-example/
-│   │   ├── scope.md
-│   │   ├── implementation_plan.md
-│   │   ├── handoff.md
-│   │   ├── review.md
-│   │   └── decisions.md
-│
-├── releases/
-│   └── v0.1.0.md
-│
-└── archive/
-```
-
----
-
-# Documentation Rules
-
-## docs/project/
-
-Represents permanent project memory.
-
-Contains:
-- architecture
-- database standards
-- API contracts
-- security decisions
-- global scope
-- permanent decisions
-
-These files must NOT be modified casually.
-
-Changes must be intentional and justified.
-
----
-
-## docs/tasks/
-
-Represents isolated task execution memory.
-
-Each task must have its own folder.
-
-All implementation evidence belongs here.
-
-Task folders prevent:
-- merge conflicts
-- mixed handoffs
-- context corruption
-- concurrent overwrite issues
-
----
-
-## docs/releases/
-
-Represents delivery snapshots.
-
-Release documents summarize:
-- completed tasks
-- migrations
-- deployment notes
-- risks
-- important changes
-
----
-
-# Mandatory Workflow
-
-Before implementing ANY task:
-
-1. Read:
-   - docs/project/project_status.md
-   - docs/project/architecture.md
-   - docs/project/decision_log.md
-   - docs/project/backlog.md
-
-2. Locate or create the task folder:
+Canonical task folder:
 
 ```txt
 docs/tasks/TASK-XXX-name/
+  scope.md
+  implementation_plan.md
+  handoff.md
+  review.md
+  decisions.md
 ```
 
-3. Read task documents:
-   - scope.md
-   - implementation_plan.md
-   - previous handoff/review if they exist
+## Before Code Changes
 
-4. Only then begin implementation.
+Before implementing a feature, fix, refactor, migration, or other code change:
 
----
+1. Identify the active task from the user request, `docs/project/backlog.md`, or `docs/project/project_status.md`.
+2. Read the canonical project files when they exist.
+3. Locate or create the matching `docs/tasks/TASK-XXX-name/` folder.
+4. Read `scope.md` and `implementation_plan.md`.
+5. Read existing `handoff.md`, `review.md`, and `decisions.md` when present.
+6. Implement only the approved task scope.
 
-# Implementation Rules
+If required context is missing:
 
-AI agents MUST:
+- For ambiguous, risky, architectural, security-sensitive, or broad work: stop and ask.
+- For small explicit fixes: proceed conservatively, document the missing context in `handoff.md`, and avoid expanding scope.
 
-- stay inside task scope
-- avoid unrelated modifications
-- avoid architectural rewrites
-- avoid broad refactors unless explicitly requested
-- document decisions
-- generate handoff evidence
-- keep changes minimal and traceable
+## Implementation Rules
 
-AI agents MUST NOT:
+Codex must:
 
-- redefine architecture autonomously
-- silently modify unrelated systems
-- skip documentation
-- bypass review
-- create hidden side effects
-- modify global docs unnecessarily
+- keep changes narrow and traceable;
+- follow existing architecture and local code patterns;
+- avoid unrelated refactors;
+- avoid modifying global project docs with task execution details;
+- record task-specific decisions in `docs/tasks/TASK-XXX-name/decisions.md`;
+- update `docs/tasks/TASK-XXX-name/handoff.md` after implementation.
 
----
+Codex must not:
 
-# Pull Request Philosophy
+- mix unrelated tasks in one execution;
+- rewrite architecture silently;
+- promote task-local decisions to global docs unless they affect the whole project;
+- mark work complete without handoff evidence;
+- treat branch names as documentation identity.
 
-One task = one Pull Request.
+## Review Rules
 
-PRs should be:
-- small
-- reviewable
-- isolated
-- traceable
+For review requests:
 
-Avoid:
-- giant mixed PRs
-- unrelated modifications
-- architecture rewrites inside feature PRs
+1. Read the canonical project files.
+2. Read the task folder.
+3. Validate scope adherence, architecture consistency, security impact, side effects, code quality, validation evidence, and documentation completeness.
+4. Write results to `docs/tasks/TASK-XXX-name/review.md`.
 
----
-
-# Handoff Requirements
-
-Every completed implementation MUST generate:
+Review outcomes:
 
 ```txt
-docs/tasks/TASK-XXX/handoff.md
+approved
+approved_with_notes
+rejected
 ```
 
-The handoff must contain:
-- what was implemented
-- files modified
-- important decisions
-- validation evidence
-- risks
-- pending issues
-- next recommended actions
+## Decision Rules
 
-Code without handoff is considered incomplete.
-
----
-
-# Review Requirements
-
-Every task review MUST generate:
+Use task decisions for local implementation choices:
 
 ```txt
-docs/tasks/TASK-XXX/review.md
+docs/tasks/TASK-XXX-name/decisions.md
 ```
 
-The review must validate:
-- scope adherence
-- architecture consistency
-- security
-- side effects
-- code quality
-- documentation completeness
+Use global decision log only for decisions that affect:
 
----
-
-# Decision Rules
-
-Task-level decisions belong in:
-
-```txt
-docs/tasks/TASK-XXX/decisions.md
-```
-
-Permanent architectural decisions belong in:
+- architecture;
+- security;
+- database design;
+- API contracts;
+- deployment;
+- project-wide standards;
+- multiple systems;
+- long-term maintenance.
 
 ```txt
 docs/project/decision_log.md
 ```
 
-Promote decisions to global decision log ONLY if they:
-- affect architecture
-- affect security
-- affect standards
-- affect multiple systems
-- create long-term constraints
+## Codex Skills
 
----
+Use the skills in `.agents/skills/` when their descriptions match the request.
 
-# Git Workflow
+Primary skills:
 
-Recommended workflow:
+- `pipeline-router`: default entrypoint for status, planning, task creation, implementation, review, validation, onboarding, and next-action decisions.
+- `execute-task`: implement a defined task using this pipeline.
+- `review-delivery`: validate a completed task.
+- `resume-session`: reconstruct state before continuing unclear or resumed work.
+- `onboard-existing-project`: align an existing project with this pipeline.
+- `structure-project`: create the initial docs structure for a new project.
 
-```bash
-git checkout main
-git pull origin main
-git checkout -b feat/TASK-XXX-name
+For natural-language pipeline requests, use `pipeline-router` first. The user should not need to name skills, scripts, task paths, or workflow order.
+
+When the user asks for the current pipeline, project, or task state, route through `pipeline-router`, use `resume-session`, and reconstruct state from repository docs before answering.
+
+## Deterministic Scripts
+
+Prefer scripts over hand-created boilerplate when they are available:
+
+```powershell
+./.agents/scripts/pipeline.ps1 status -Root .
+./.agents/scripts/init_project.ps1 -Root .
+./.agents/scripts/init_task.ps1 -Root . -Id TASK-001 -Name "task name"
+./.agents/scripts/validate_project.ps1 -Root .
+./.agents/scripts/validate_task.ps1 -Root . -Task TASK-001 -Stage ready
+./.agents/scripts/status_pipeline.ps1 -Root .
 ```
 
-Never push directly to main.
+Use scripts to create repeatable structure and to verify pipeline contracts. If a script fails, treat the failure as a blocker unless the user explicitly chooses to proceed.
 
-All changes must go through Pull Requests.
+## Safety
 
----
+If repository state and requested work conflict:
 
-# Collaboration Rules
+1. stop before making broad changes;
+2. explain the conflict;
+3. update task docs only when the resolution is clear;
+4. ask the user when the decision changes scope, architecture, or risk.
 
-This repository is designed for simultaneous human and AI collaboration.
+## Completion
 
-To reduce conflicts:
+An implementation task is complete only when:
 
-- keep PRs small
-- isolate tasks
-- avoid editing unrelated files
-- avoid modifying global docs unless necessary
-- split large systems into modular files
-- document everything important
-
----
-
-# AI Agent Behavior
-
-AI agents should behave like disciplined engineering collaborators.
-
-The objective is not maximum code generation.
-
-The objective is controlled, auditable and maintainable evolution of the project.
-
-Every implementation must leave evidence.
+- code changes are finished;
+- relevant validation was run or explicitly skipped with reason;
+- `handoff.md` records changed files, behavior, decisions, evidence, risks, and next steps;
+- any global documentation updates are justified.

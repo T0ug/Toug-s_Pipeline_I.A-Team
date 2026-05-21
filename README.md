@@ -1,342 +1,440 @@
-# Toug's Pipeline I.A
+# Toug's Pipeline I.A - Team
 
-Um sistema de desenvolvimento com IA baseado em agentes, workflows, templates e regras operacionais.
+Pipeline Codex-native para desenvolvimento assistido por IA.
 
-Mais do que um conjunto de prompts, esta pipeline define **como a IA deve trabalhar** dentro de um projeto.
+O objetivo nao e criar mais um conjunto de prompts. O objetivo e dar ao Codex um modo de trabalho previsivel, rastreavel e verificavel em projetos reais.
 
----
+## Filosofia
 
-## 🎯 Objetivo
-
-Transformar o uso de IA em um processo:
-
-- estruturado
-- rastreável
-- consistente entre sessões
-- seguro contra sobrescrita e perda de contexto
-
----
-
-## 🧠 Conceito central
-
-A pipeline se baseia em três pilares:
-
-### 1. Estrutura (`.agents/`)
-Define como a IA funciona.
-
-### 2. Estado do projeto (`docs/`)
-Define o que o projeto é.
-
-### 3. Regras (`AGENTS.md` + `rules/`)
-Define como a IA deve se comportar.
-
----
-
-## 🧱 Estrutura do sistema
+A pipeline organiza o trabalho em tres camadas:
 
 ```txt
-.agents/
-  core/
-  agents/
-  skills/
-  workflows/
-  templates/
-  registry/
-  rules/
+AGENTS.md       instrucoes sempre ativas para o Codex
+.agents/        skills, scripts, templates e referencias
+docs/           memoria persistente do projeto
+```
 
-docs/
+O chat nao e fonte de verdade. O estado do projeto deve ser reconstruido a partir de arquivos versionados.
+
+## Modelo Codex-Native
+
+Esta pipeline foi desenhada exclusivamente para Codex.
+
+Superficie ativa:
+
+```txt
 AGENTS.md
+.agents/skills/*/SKILL.md
+.agents/scripts/*.ps1
+docs/project/
+docs/tasks/
 ```
 
----
-
-## ⚠️ Uso obrigatório (IMPORTANTE)
-
-Para que a pipeline funcione corretamente, é obrigatório:
-
-### 1. Adicionar o AGENTS.md no root do projeto
-
-Este arquivo contém as regras globais do sistema.
-
-Sem ele:
-- a pipeline vira apenas sugestão
-- o comportamento da IA se torna inconsistente
-
----
-
-### 2. Utilizar as Rules da pipeline
-
-A pasta:
+Superficie auxiliar:
 
 ```txt
+.agents/templates/
+.agents/references/
+```
+
+Nao fazem parte do modelo atual:
+
+```txt
+.agents/agents/
+.agents/workflows/
 .agents/rules/
+.agents/core/
+.agents/registry/
 ```
 
-já contém regras que:
+Papeis como Executor, Reviewer e Orchestrator continuam existindo como fases do processo, mas nao como arquivos ou agentes paralelos. No Codex, o fluxo deve ser expresso por `AGENTS.md`, skills e scripts.
 
-- forçam o uso da pipeline
-- garantem leitura de `docs/`
-- impedem troca de agentes indevida
-- evitam execução sem contexto
-
-Essas rules são automaticamente integradas ao projeto.
-
----
-
-### 3. Usar `docs/` como fonte de verdade
-
-Todos os artefatos do projeto devem viver em:
+## Estrutura
 
 ```txt
-docs/
+.
+|-- AGENTS.md
+|-- .agents/
+|   |-- skills/
+|   |   |-- pipeline-router/
+|   |   |-- execute-task/
+|   |   |-- review-delivery/
+|   |   |-- resume-session/
+|   |   |-- onboard-existing-project/
+|   |   `-- structure-project/
+|   |-- scripts/
+|   |-- templates/
+|   `-- references/
+`-- docs/
+    |-- project/
+    |-- tasks/
+    |-- releases/
+    `-- archive/
 ```
 
-Incluindo:
+## Memoria Do Projeto
 
-- idea.md
-- scope.md
-- tasks.md
-- project_status.md
-- decision_log.md
-- handoff.md
-
-A IA deve sempre ler esses arquivos antes de agir.
-
----
-
-## 🚀 Instalação
-
-Clone o repositório:
-
-```bash
-git clone https://github.com/T0ug/Toug-s_Pipeline_I.A.git
-cd Toug-s_Pipeline_I.A
-npm install
-npm link
-```
-
----
-
-## 📦 Instalação no projeto
-
-No projeto onde deseja usar a pipeline:
-
-```bash
-toug-pipeline init
-toug-pipeline doctor
-```
-
----
-
-## ⚠️ Importante
-
-O comando `init` deve ser executado no projeto alvo, não dentro da pipeline.
-
----
-
-## ▶️ Como iniciar um projeto
-
-Você deve iniciar sempre com um workflow.
-
-### Novo projeto:
+Arquivos globais principais:
 
 ```txt
-Use o workflow start_project
+docs/project/project_status.md
+docs/project/backlog.md
+docs/project/architecture.md
+docs/project/decision_log.md
 ```
 
-### Projeto já existente:
+Cada task tem sua propria pasta:
 
 ```txt
-Use o workflow onboard_existing_project
+docs/tasks/TASK-XXX-name/
+  scope.md
+  implementation_plan.md
+  decisions.md
+  handoff.md
+  review.md
 ```
 
-### Nova sessão:
+Modelo mental:
 
 ```txt
-Use o workflow resume_session
+Branch = veiculo temporario de implementacao
+Task = unidade historica de trabalho
+docs/project/ = memoria permanente
+docs/tasks/ = memoria de execucao
+docs/releases/ = snapshots de entrega
 ```
 
----
+Nunca organize documentacao por branch.
 
-## 🔁 Fluxo da pipeline
+## Skills
 
-A execução segue sempre este ciclo:
+### `pipeline-router`
+
+Entrada padrao da pipeline.
+
+Use para pedidos naturais de estado, planejamento, criacao de task, implementacao, review, validacao ou onboarding. O objetivo e que o usuario nao precise lembrar nomes de skills nem scripts.
+
+Exemplos:
 
 ```txt
-Discovery → Architect → Executor → Reviewer → Orchestrator
+qual o estado atual da pipeline?
+corrija o bug do webhook duplicado
+revisa a entrega atual
+comece uma task para login com Google
 ```
 
----
+O Codex deve rotear automaticamente para a skill correta e usar scripts quando pratico.
 
-## 🧠 Agentes
+### `structure-project`
 
-| Agente | Função |
-|------|-------|
-| Discovery | define escopo |
-| Architect | define estrutura |
-| Executor | implementa |
-| Reviewer | valida |
-| Orchestrator | coordena |
-| Project Research | reconstrói contexto de projeto existente |
+Inicializa a estrutura `docs/` em um projeto novo.
 
----
-
-## ⚙️ Workflows principais
-
-- `start_project` → inicia projeto
-- `structure_project` → define arquitetura
-- `execute_task` → executa tasks
-- `resume_session` → retoma contexto
-- `onboard_existing_project` → integra projeto existente
-
----
-
-## 📋 Tasks
-
-O planejamento vive em:
+Uso esperado:
 
 ```txt
-docs/tasks.md
+Use structure-project para preparar este repositorio para a pipeline.
 ```
 
-Regras:
+### `onboard-existing-project`
 
-- é a única fonte de verdade do planejamento
-- não criar listas paralelas
-- não executar fora de ordem
-- qualquer mudança relevante deve ser registrada em `docs/decision_log.md`
+Analisa um projeto existente e cria a memoria minima em `docs/project/` e `docs/tasks/`.
 
----
-
-## 🔄 Handoff
-
-Toda task deve gerar:
+Uso esperado:
 
 ```txt
-docs/handoff.md
+Use onboard-existing-project para alinhar este projeto com a pipeline.
 ```
 
-Sem handoff:
-→ a task não está concluída
+### `resume-session`
 
-O handoff deve conter informação suficiente para:
+Reconstrui o estado atual do projeto antes de continuar.
 
-- outro agente continuar sem depender do chat
-- o Reviewer validar a entrega com evidência
-
----
-
-## 🔍 Validação
-
-Nenhuma task avança sem:
-
-- evidência
-- validação
-- review
-
-A revisão deve gerar:
+Tambem deve responder perguntas como:
 
 ```txt
-docs/review_report.md
+qual o estado atual da pipeline?
+onde paramos?
+qual task esta ativa?
+qual o proximo passo seguro?
 ```
 
----
+### `execute-task`
 
-## 🧠 Regras do sistema
+Executa uma task definida, mantendo escopo, arquitetura e handoff.
 
-### AGENTS.md
-
-Define as regras globais do sistema:
-
-- `docs/` como fonte de verdade
-- ativação correta de agentes
-- disciplina da pipeline
-- bloqueio em caso de contexto inconsistente
-
-### Rules (`.agents/rules/`)
-
-Funcionam como enforcement ativo da pipeline.
-
-Rules recomendadas:
-
-- `pipeline_enforcement.md`
-- `context_enforcement.md`
-- `task_discipline.md`
-- `agent_control.md`
-- `execution_safety.md`
-
-Essas rules reforçam comportamento e devem operar preferencialmente em modo **Always On**.
-
----
-
-## 🧠 Continuidade entre sessões
-
-Esta pipeline foi desenhada para funcionar mesmo quando o chat perde contexto.
-
-Para retomar com segurança:
-
-1. use `resume_session`
-2. mantenha `docs/` atualizado
-3. nunca confie apenas na memória da conversa
-
-Arquivos mínimos de retomada:
-
-- `docs/project_status.md`
-- `docs/handoff.md`
-- `docs/tasks.md`
-- `docs/decision_log.md`
-
----
-
-## 🧩 Projeto já em andamento
-
-Se o projeto não nasceu dentro da pipeline, não use `start_project` direto.
-
-Use:
+Uso esperado:
 
 ```txt
-Use o workflow onboard_existing_project
+Use execute-task para TASK-014-google-login.
 ```
 
-Esse workflow serve para:
+### `review-delivery`
 
-- analisar código e docs existentes
-- reconstruir intenção e estado atual
-- gerar artefatos compatíveis com a pipeline principal
+Valida uma entrega com base em escopo, handoff, evidencias e arquitetura.
 
----
+Uso esperado:
 
-## ⚠️ Sem essas regras
+```txt
+Use review-delivery para TASK-014-google-login.
+```
 
-A pipeline:
+## Scripts
 
-- perde consistência
-- perde controle
-- vira sugestão
+Os scripts tornam a pipeline verificavel. O Codex deve preferir scripts a boilerplate manual quando possivel.
 
----
+### Piloto automatico
 
-## 🧠 Observações importantes
+```powershell
+./.agents/scripts/pipeline.ps1 status -Root .
+```
 
-- Não confiar na memória do chat
-- Sempre usar `docs/`
-- Nunca pular workflows
-- Nunca misturar papéis de agentes
-- Nunca tratar projeto existente como se fosse projeto novo
-- Nunca aprovar task sem evidência suficiente
+Acoes disponiveis:
 
----
+```txt
+status
+init-project
+start
+before-work
+after-work
+review
+complete
+validate
+```
 
-## 🎯 Conclusão
+Exemplos:
 
-Essa pipeline não é apenas um conjunto de prompts.
+```powershell
+./.agents/scripts/pipeline.ps1 start -Root . -Name "login com Google"
+./.agents/scripts/pipeline.ps1 before-work -Root . -Task TASK-001
+./.agents/scripts/pipeline.ps1 after-work -Root . -Task TASK-001
+./.agents/scripts/pipeline.ps1 review -Root . -Task TASK-001
+```
 
-Ela é um sistema para transformar IA em uma ferramenta de desenvolvimento previsível, controlada e reutilizável entre sessões.
+O usuario normalmente nao precisa chamar isso manualmente. O Codex deve usar este script por tras da conversa.
 
----
+### Validar a propria pipeline
 
-## 📌 Status
+```powershell
+./.agents/scripts/validate_pipeline.ps1 -Root .
+```
 
-Versão atual: v1
+### Inicializar docs de projeto
 
-Base pronta para uso, personalização e evolução contínua.
+```powershell
+./.agents/scripts/init_project.ps1 -Root .
+```
+
+Cria:
+
+```txt
+docs/project/
+docs/tasks/
+docs/releases/
+docs/archive/
+```
+
+### Criar uma task
+
+```powershell
+./.agents/scripts/init_task.ps1 -Root . -Id TASK-001 -Name "first task"
+```
+
+Cria:
+
+```txt
+docs/tasks/TASK-001-first-task/
+  scope.md
+  implementation_plan.md
+  decisions.md
+  handoff.md
+  review.md
+```
+
+Tambem registra a task em:
+
+```txt
+docs/project/backlog.md
+```
+
+### Validar projeto
+
+```powershell
+./.agents/scripts/validate_project.ps1 -Root .
+```
+
+Verifica se o projeto esta no modelo Codex-native da pipeline.
+
+### Validar task
+
+```powershell
+./.agents/scripts/validate_task.ps1 -Root . -Task TASK-001 -Stage ready
+```
+
+Estagios:
+
+```txt
+ready
+implemented
+reviewed
+complete
+```
+
+### Ver estado atual
+
+```powershell
+./.agents/scripts/status_pipeline.ps1 -Root .
+```
+
+Esse script informa:
+
+- validacao do projeto;
+- task ativa;
+- pasta da task;
+- estado dos arquivos da task;
+- se handoff/review estao completos;
+- proxima acao segura.
+
+## Fluxo Recomendado
+
+### Projeto novo
+
+```txt
+Use structure-project.
+```
+
+Depois:
+
+```powershell
+./.agents/scripts/init_project.ps1 -Root .
+./.agents/scripts/init_task.ps1 -Root . -Id TASK-001 -Name "primeira task"
+```
+
+### Projeto existente
+
+```txt
+Use onboard-existing-project.
+```
+
+O Codex deve:
+
+1. inspecionar estrutura, README, configs, testes e codigo principal;
+2. criar ou atualizar `docs/project/`;
+3. criar tasks iniciais apenas quando houver trabalho ativo claro;
+4. rodar `validate_project.ps1`;
+5. recomendar a proxima acao segura.
+
+### Nova sessao
+
+```txt
+qual o estado atual da pipeline?
+```
+
+O Codex deve usar `pipeline-router`, rodar ou seguir `pipeline.ps1 status`, ler `docs/project/` e `docs/tasks/`, e responder com o estado atual.
+
+### Implementacao
+
+```txt
+Use execute-task para TASK-XXX-name.
+```
+
+Ao concluir, a task deve ter handoff atualizado:
+
+```txt
+docs/tasks/TASK-XXX-name/handoff.md
+```
+
+### Review
+
+```txt
+Use review-delivery para TASK-XXX-name.
+```
+
+O resultado deve ser registrado em:
+
+```txt
+docs/tasks/TASK-XXX-name/review.md
+```
+
+## Criterios De Conclusao
+
+Uma task de implementacao so esta concluida quando:
+
+- o escopo foi cumprido;
+- a validacao relevante foi executada ou justificada;
+- `handoff.md` foi atualizado;
+- decisoes locais foram registradas em `decisions.md`;
+- riscos e pendencias ficaram explicitos.
+
+Uma task so esta validada quando:
+
+- `review.md` foi preenchido;
+- o resultado e `approved`, `approved_with_notes` ou `rejected`;
+- evidencias foram verificadas.
+
+## Instalacao Em Projetos Reais
+
+Instale no root do projeto alvo:
+
+```txt
+AGENTS.md
+.agents/
+.github/
+```
+
+Depois rode:
+
+```powershell
+./.agents/scripts/validate_pipeline.ps1 -Root .
+./.agents/scripts/init_project.ps1 -Root .
+./.agents/scripts/status_pipeline.ps1 -Root .
+```
+
+## Colaboracao Em Equipe
+
+Para equipes usando Codex em paralelo:
+
+- uma task por branch;
+- uma task por PR;
+- evitar duas pessoas trabalhando na mesma task ao mesmo tempo;
+- tratar `docs/project/` como memoria compartilhada protegida;
+- registrar execucao em `handoff.md`;
+- registrar validacao em `review.md`.
+
+O template de PR fica em:
+
+```txt
+.github/pull_request_template.md
+```
+
+O workflow de CI fica em:
+
+```txt
+.github/workflows/pipeline.yml
+```
+
+Ele valida automaticamente a pipeline, valida `docs/project/` quando inicializado e tenta validar a task inferida do nome da branch ou titulo do PR quando houver `TASK-XXX`.
+
+## CLI
+
+O pacote possui um CLI em `cli/`, mas a superficie atual da pipeline e Codex-native e baseada em `AGENTS.md`, `.agents/skills` e `.agents/scripts`.
+
+Antes de depender do CLI para instalacao ou doctor, confira se ele esta alinhado com a estrutura atual. A referencia principal desta versao e este README junto com:
+
+```txt
+.agents/references/codex_installation_model.md
+```
+
+## Principios
+
+- Codex deve ler arquivos, nao depender do chat.
+- Tasks devem ser historicas e isoladas.
+- Mudancas devem ser pequenas, rastreaveis e revisaveis.
+- Decisoes locais ficam na task.
+- Decisoes globais ficam em `docs/project/decision_log.md`.
+- Scripts devem transformar disciplina em contrato verificavel.
+
+## Status
+
+Versao atual: v3 Codex-native.
+
+Foco atual: uso com Codex, roteamento automatico por `pipeline-router`, scripts deterministico e colaboracao via PR/CI.

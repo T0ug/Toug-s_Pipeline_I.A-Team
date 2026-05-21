@@ -1,0 +1,47 @@
+name: Pipeline
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - master
+
+jobs:
+  validate-pipeline:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate pipeline package
+        shell: pwsh
+        run: ./.agents/scripts/validate_pipeline.ps1 -Root .
+
+      - name: Validate project docs when initialized
+        shell: pwsh
+        run: |
+          if (Test-Path -LiteralPath "docs/project") {
+            ./.agents/scripts/validate_project.ps1 -Root .
+          } else {
+            Write-Host "docs/project not found; skipping project validation."
+          }
+
+      - name: Validate task inferred from branch or PR
+        if: github.event_name == 'pull_request'
+        shell: pwsh
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_BRANCH: ${{ github.head_ref }}
+        run: |
+          $source = "$env:PR_BRANCH $env:PR_TITLE"
+          $match = [regex]::Match($source, "TASK-\d{3,}")
+          if (-not $match.Success) {
+            Write-Host "No TASK-XXX found in branch or PR title; skipping task validation."
+            exit 0
+          }
+
+          $task = $match.Value
+          Write-Host "Validating inferred task: $task"
+          ./.agents/scripts/validate_task.ps1 -Root . -Task $task -Stage implemented
