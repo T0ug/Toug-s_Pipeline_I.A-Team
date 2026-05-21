@@ -1,12 +1,28 @@
 {
-    "name": "toug-pipeline-ia",
-    "version": "0.1.0",
-    "description": "CLI para instalar e verificar Toug's Pipeline I.A",
-    "bin": {
-        "toug-pipeline": "./cli/index.js"
+    "name": "toug-i.a-pipeline-team",
+    "version": "0.3.0",
+    "description": "Pipeline Codex-native para equipes que desenvolvem com IA",
+    "license": "UNLICENSED",
+    "publishConfig": {
+        "access": "public"
     },
     "type": "module",
+    "bin": {
+        "toug-pipeline": "cli/index.js",
+        "toug-i.a-pipeline-team": "cli/index.js"
+    },
+    "files": [
+        "AGENTS.md",
+        ".agents",
+        ".github",
+        "cli",
+        "README.md"
+    ],
     "scripts": {
-        "start": "node ./cli/index.js"
+        "start": "node ./cli/index.js",
+        "postinstall": "node ./cli/postinstall.js",
+        "doctor": "node ./cli/index.js doctor",
+        "validate:pipeline": "powershell -NoProfile -ExecutionPolicy Bypass -File ./.agents/scripts/validate_pipeline.ps1 -Root .",
+        "prepublishOnly": "npm run validate:pipeline"
     }
 }

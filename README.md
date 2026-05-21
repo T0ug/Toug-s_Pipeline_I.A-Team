@@ -4,6 +4,34 @@ Pipeline Codex-native para desenvolvimento assistido por IA.
 
 O objetivo nao e criar mais um conjunto de prompts. O objetivo e dar ao Codex um modo de trabalho previsivel, rastreavel e verificavel em projetos reais.
 
+## Instalacao Rapida
+
+No root de qualquer projeto:
+
+```powershell
+npm install -D toug-i.a-pipeline-team
+```
+
+Esse comando instala automaticamente:
+
+```txt
+AGENTS.md
+.agents/
+.github/
+```
+
+Depois abra o projeto no Codex e pergunte:
+
+```txt
+qual o estado atual da pipeline?
+```
+
+Para conferir pelo terminal:
+
+```powershell
+npx toug-pipeline doctor
+```
+
 ## Filosofia
 
 A pipeline organiza o trabalho em tres camadas:
@@ -417,7 +445,13 @@ Uma task so esta validada quando:
 
 ## Instalacao Em Projetos Reais
 
-Instale no root do projeto alvo:
+No root do projeto alvo, rode:
+
+```powershell
+npm install -D toug-i.a-pipeline-team
+```
+
+Pronto. Durante o `npm install`, o pacote copia automaticamente para o projeto:
 
 ```txt
 AGENTS.md
@@ -425,7 +459,102 @@ AGENTS.md
 .github/
 ```
 
-Depois rode:
+Depois abra o projeto no Codex e pergunte:
+
+```txt
+qual o estado atual da pipeline?
+```
+
+Para verificar pelo terminal:
+
+```powershell
+npx toug-pipeline doctor
+```
+
+### Projeto Novo
+
+Se o projeto ainda nao tem docs da pipeline, rode tambem:
+
+```powershell
+npx toug-pipeline init --with-docs
+npx toug-pipeline doctor
+```
+
+Isso cria:
+
+```txt
+docs/project/
+docs/tasks/
+docs/releases/
+docs/archive/
+```
+
+### Projeto Existente
+
+Para projeto que ja tem codigo, docs fora do padrao, ou historico em andamento, instale apenas a superficie da pipeline:
+
+```powershell
+npm install -D toug-i.a-pipeline-team
+```
+
+Depois, no Codex, peca:
+
+```txt
+faca o onboarding deste projeto existente para a pipeline
+```
+
+O Codex deve usar `onboard-existing-project`, varrer o repositorio inteiro, encontrar docs fora do padrao e so depois preencher `docs/project/`.
+
+### Atualizar Pipeline
+
+Para atualizar uma instalacao ja existente:
+
+```powershell
+npx toug-pipeline upgrade
+```
+
+O `upgrade` cria backup local de `AGENTS.md`, `.agents/` e `.github/` antes de sobrescrever.
+
+### Evitar Instalacao Automatica
+
+Se voce quiser instalar a dependencia sem copiar a pipeline automaticamente:
+
+```powershell
+$env:TOUG_PIPELINE_SKIP_AUTO_INSTALL = "1"
+npm install -D toug-i.a-pipeline-team
+```
+
+### Desenvolvimento local deste pacote
+
+No repositorio da pipeline:
+
+```powershell
+npm link
+```
+
+No projeto alvo:
+
+```powershell
+npx toug-pipeline init --with-docs
+npx toug-pipeline doctor
+```
+
+### Sem instalacao global
+
+No projeto alvo, chamando o CLI pelo caminho local do repositorio da pipeline:
+
+```powershell
+node "C:\path\to\Toug-s_Pipeline_I.A - Team\cli\index.js" init --with-docs
+node "C:\path\to\Toug-s_Pipeline_I.A - Team\cli\index.js" doctor
+```
+
+Depois da instalacao, dentro do Codex, o usuario nao precisa decorar comandos. Basta abrir o projeto e pedir:
+
+```txt
+qual o estado atual da pipeline?
+```
+
+Para verificacao manual:
 
 ```powershell
 ./.agents/scripts/validate_pipeline.ps1 -Root .
@@ -469,13 +598,54 @@ Ele valida automaticamente a pipeline, valida `docs/project/` quando inicializad
 
 ## CLI
 
-O pacote possui um CLI em `cli/`, mas a superficie atual da pipeline e Codex-native e baseada em `AGENTS.md`, `.agents/skills` e `.agents/scripts`.
+O CLI em `cli/` existe apenas como instalador e verificador da pipeline em projetos reais.
 
-Antes de depender do CLI para instalacao ou doctor, confira se ele esta alinhado com a estrutura atual. A referencia principal desta versao e este README junto com:
+Ele nao substitui o Codex, nao executa o trabalho da pipeline e nao cria uma camada paralela de workflow. A superficie operacional continua sendo:
 
 ```txt
-.agents/references/codex_installation_model.md
+AGENTS.md
+.agents/skills/
+.agents/scripts/
+docs/project/
+docs/tasks/
 ```
+
+Comandos:
+
+```powershell
+npm install -D toug-i.a-pipeline-team
+npx toug-pipeline init
+npx toug-pipeline init --with-docs
+npx toug-pipeline doctor
+npx toug-pipeline upgrade
+```
+
+Significado:
+
+- `npm install -D toug-i.a-pipeline-team`: instala o pacote e copia automaticamente `AGENTS.md`, `.agents/` e `.github/` para o projeto atual;
+- `npx toug-pipeline init`: copia `AGENTS.md`, `.agents/` e `.github/` para o projeto atual;
+- `npx toug-pipeline init --with-docs`: tambem inicializa `docs/project`, `docs/tasks`, `docs/releases` e `docs/archive`;
+- `npx toug-pipeline doctor`: verifica se a instalacao esta no modelo Codex-native atual e alerta se `docs/project` ainda nao foi inicializado;
+- `npx toug-pipeline upgrade`: cria backup local dos arquivos atuais da pipeline e depois atualiza `AGENTS.md`, `.agents/` e `.github/`.
+
+Para impedir a instalacao automatica durante `npm install`, use:
+
+```powershell
+$env:TOUG_PIPELINE_SKIP_AUTO_INSTALL = "1"
+npm install -D toug-i.a-pipeline-team
+```
+
+O `doctor` valida que existem os arquivos atuais e que nao existem estruturas legadas:
+
+```txt
+.agents/agents/
+.agents/workflows/
+.agents/rules/
+.agents/core/
+.agents/registry/
+```
+
+A referencia principal desta versao e este README junto com `.agents/references/codex_installation_model.md`.
 
 ## Principios
 

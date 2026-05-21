@@ -64,6 +64,43 @@ Use resume-session and tell me the next safe action.
 Use onboard-existing-project to align this repo with the pipeline.
 ```
 
+## CLI Installation
+
+The CLI is only an installer and checker for real repositories. It does not replace Codex skills or scripts.
+
+Install the active Codex surface in the target repository with npm:
+
+```powershell
+npm install -D toug-i.a-pipeline-team
+npx toug-pipeline doctor
+```
+
+The package `postinstall` copies `AGENTS.md`, `.agents/`, and `.github/` into the target repository. It must not overwrite existing pipeline files automatically.
+
+To initialize docs as well:
+
+```powershell
+npx toug-pipeline init --with-docs
+```
+
+For local package development:
+
+```powershell
+npm link
+```
+
+Then run the same `toug-pipeline` commands from the target repository.
+
+The CLI installs:
+
+```txt
+AGENTS.md
+.agents/
+.github/
+```
+
+It must not install or require legacy paths such as `.agents/agents`, `.agents/workflows`, `.agents/rules`, `.agents/core`, or `.agents/registry`.
+
 ## Deterministic Scripts
 
 Prefer scripts when creating or validating pipeline artifacts:
