@@ -1,299 +1,150 @@
-# AGENTS.md
+# System Rules
 
-# Purpose
+## Core Principle
 
-This repository uses a structured AI-assisted development pipeline.
+The project must be executed strictly through the pipeline defined in `.agents/`.
 
-The goal is NOT only code generation.
-
-The goal is:
-- controlled execution
-- architectural consistency
-- traceability
-- reproducibility
-- task isolation
-- reviewability
-- safe collaboration between humans and AI agents
-
-This repository is designed for multi-developer and multi-agent collaboration.
-
-AI agents must follow the pipeline rules strictly.
+Do not improvise structure, roles, or execution flow.
 
 ---
 
-# Core Philosophy
+## Source of Truth
 
-The project is divided into:
+All project state must be read from `docs/`.
 
-```txt
-1. Permanent project memory
-2. Task execution memory
-3. Release history
-```
+Chat history is not a reliable source of truth.
 
-Correct mental model:
-
-```txt
-Branch = temporary implementation vehicle
-Task = historical unit of work
-Project docs = permanent project memory
-Release docs = delivery snapshot
-```
-
-Branches are temporary.
-
-Tasks are historical.
-
-Never organize documentation by branch name.
-
-Always organize documentation by task identity.
+Priority order:
+1. docs/
+2. workflows
+3. skills
+4. chat
 
 ---
 
-# Documentation Structure
+## Mandatory Context Reading
 
-```txt
-docs/
-├── project/
-│   ├── vision.md
-│   ├── scope.md
-│   ├── architecture.md
-│   ├── database.md
-│   ├── api.md
-│   ├── security.md
-│   ├── project_status.md
-│   ├── decision_log.md
-│   └── backlog.md
-│
-├── tasks/
-│   ├── TASK-001-example/
-│   │   ├── scope.md
-│   │   ├── implementation_plan.md
-│   │   ├── handoff.md
-│   │   ├── review.md
-│   │   └── decisions.md
-│
-├── releases/
-│   └── v0.1.0.md
-│
-└── archive/
-```
+Before any action, always read:
+
+- docs/project_status.md
+- docs/handoff.md
+- docs/tasks.md
+- docs/decision_log.md
+
+If context is missing or unclear:
+→ stop and ask
+
+(If the project is being submitted in the onboard_existing_project.md workflow or if it is a project being initialized, this rule can be ignored)
 
 ---
 
-# Documentation Rules
+## Session Handling
 
-## docs/project/
+In new or unclear sessions:
 
-Represents permanent project memory.
-
-Contains:
-- architecture
-- database standards
-- API contracts
-- security decisions
-- global scope
-- permanent decisions
-
-These files must NOT be modified casually.
-
-Changes must be intentional and justified.
+- reconstruct context from docs/
+- do not assume continuity
+- do not proceed without context
 
 ---
 
-## docs/tasks/
+## Agent Control
 
-Represents isolated task execution memory.
+Agents must not change roles automatically.
 
-Each task must have its own folder.
+Valid activation methods only:
 
-All implementation evidence belongs here.
+1. workflow invocation
+2. explicit agent + skill instruction
 
-Task folders prevent:
-- merge conflicts
-- mixed handoffs
-- context corruption
-- concurrent overwrite issues
+If activation is unclear:
+→ ask before proceeding
 
 ---
 
-## docs/releases/
+## Workflow Enforcement
 
-Represents delivery snapshots.
+If a workflow is invoked:
 
-Release documents summarize:
-- completed tasks
-- migrations
-- deployment notes
-- risks
-- important changes
+- follow it strictly
+- do not skip steps
+- do not reorder steps
+- do not partially execute
 
 ---
 
-# Mandatory Workflow
+## Task Control
 
-Before implementing ANY task:
+docs/tasks.md is the single source of truth for planning.
 
-1. Read:
-   - docs/project/project_status.md
-   - docs/project/architecture.md
-   - docs/project/decision_log.md
-   - docs/project/backlog.md
+Do not:
 
-2. Locate or create the task folder:
+- create alternative task lists
+- simplify tasks without alignment
+- execute tasks out of order
 
-```txt
-docs/tasks/TASK-XXX-name/
-```
-
-3. Read task documents:
-   - scope.md
-   - implementation_plan.md
-   - previous handoff/review if they exist
-
-4. Only then begin implementation.
+If deviation is required:
+→ register in docs/decision_log.md
 
 ---
 
-# Implementation Rules
+## Artifact Rules
 
-AI agents MUST:
+All project artifacts must be written to docs/.
 
-- stay inside task scope
-- avoid unrelated modifications
-- avoid architectural rewrites
-- avoid broad refactors unless explicitly requested
-- document decisions
-- generate handoff evidence
-- keep changes minimal and traceable
+Never write project artifacts inside `.agents/`.
 
-AI agents MUST NOT:
-
-- redefine architecture autonomously
-- silently modify unrelated systems
-- skip documentation
-- bypass review
-- create hidden side effects
-- modify global docs unnecessarily
+`.agents/` is reserved for pipeline configuration only.
 
 ---
 
-# Pull Request Philosophy
+## Orchestrator Constraints
 
-One task = one Pull Request.
+The Orchestrator must not:
 
-PRs should be:
-- small
-- reviewable
-- isolated
-- traceable
+- execute tasks
+- switch agents
+- override workflows
 
-Avoid:
-- giant mixed PRs
-- unrelated modifications
-- architecture rewrites inside feature PRs
+The Orchestrator may only:
+
+- analyze state
+- suggest next actions
 
 ---
 
-# Handoff Requirements
+## Execution Discipline
 
-Every completed implementation MUST generate:
+Do not:
 
-```txt
-docs/tasks/TASK-XXX/handoff.md
-```
+- assume missing information
+- skip validation steps
+- proceed without clear state
 
-The handoff must contain:
-- what was implemented
-- files modified
-- important decisions
-- validation evidence
-- risks
-- pending issues
-- next recommended actions
+Always:
 
-Code without handoff is considered incomplete.
+- validate before proceeding
+- ask when uncertain
 
 ---
 
-# Review Requirements
+## Error Handling
 
-Every task review MUST generate:
+If inconsistency is detected between:
 
-```txt
-docs/tasks/TASK-XXX/review.md
-```
+- tasks
+- handoff
+- project_status
+- decision_log
 
-The review must validate:
-- scope adherence
-- architecture consistency
-- security
-- side effects
-- code quality
-- documentation completeness
+→ stop execution  
+→ report the issue  
+→ request correction  
 
 ---
 
-# Decision Rules
+## Final Rule
 
-Task-level decisions belong in:
+Without explicit activation and valid context:
 
-```txt
-docs/tasks/TASK-XXX/decisions.md
-```
-
-Permanent architectural decisions belong in:
-
-```txt
-docs/project/decision_log.md
-```
-
-Promote decisions to global decision log ONLY if they:
-- affect architecture
-- affect security
-- affect standards
-- affect multiple systems
-- create long-term constraints
-
----
-
-# Git Workflow
-
-Recommended workflow:
-
-```bash
-git checkout main
-git pull origin main
-git checkout -b feat/TASK-XXX-name
-```
-
-Never push directly to main.
-
-All changes must go through Pull Requests.
-
----
-
-# Collaboration Rules
-
-This repository is designed for simultaneous human and AI collaboration.
-
-To reduce conflicts:
-
-- keep PRs small
-- isolate tasks
-- avoid editing unrelated files
-- avoid modifying global docs unless necessary
-- split large systems into modular files
-- document everything important
-
----
-
-# AI Agent Behavior
-
-AI agents should behave like disciplined engineering collaborators.
-
-The objective is not maximum code generation.
-
-The objective is controlled, auditable and maintainable evolution of the project.
-
-Every implementation must leave evidence.
+→ do not proceed
