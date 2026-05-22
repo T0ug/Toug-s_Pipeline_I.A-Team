@@ -1,5 +1,6 @@
 import fs from "fs";
 import path from "path";
+import { resolveProjectRoot } from "./init.js";
 
 const REQUIRED_PATHS = [
     "AGENTS.md",
@@ -64,7 +65,7 @@ function printList(title, items) {
 }
 
 export async function doctorCommand() {
-    const root = process.cwd();
+    const root = resolveProjectRoot();
     const missing = REQUIRED_PATHS.filter((item) => !exists(root, item));
     const forbidden = FORBIDDEN_PATHS.filter((item) => exists(root, item));
     const missingDocs = PROJECT_DOCS.filter((item) => !exists(root, item));

@@ -515,6 +515,17 @@ npx toug-pipeline upgrade
 
 O `upgrade` cria backup local de `AGENTS.md`, `.agents/` e `.github/` antes de sobrescrever.
 
+Se a instalacao ficou parcial, rode:
+
+```powershell
+npx toug-pipeline init
+npx toug-pipeline doctor
+```
+
+O `init` preserva arquivos existentes e preenche arquivos faltantes dentro de `.agents/` e `.github/`.
+
+Em projetos com acentos no caminho, como `Menu de Automacoes`, use a versao `0.3.2` ou superior. Ela corrige casos em que o npm/Node recebe o caminho em formato mojibake e tenta criar arquivos em uma pasta paralela com caracteres quebrados.
+
 ### Evitar Instalacao Automatica
 
 Se voce quiser instalar a dependencia sem copiar a pipeline automaticamente:

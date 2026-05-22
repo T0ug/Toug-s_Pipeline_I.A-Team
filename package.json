@@ -1,6 +1,6 @@
 {
     "name": "toug-i.a-pipeline-team",
-    "version": "0.3.0",
+    "version": "0.3.2",
     "description": "Pipeline Codex-native para equipes que desenvolvem com IA",
     "license": "UNLICENSED",
     "publishConfig": {

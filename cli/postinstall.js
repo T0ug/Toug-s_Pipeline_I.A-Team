@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import path from "path";
-import { getPackageRoot, installPipeline } from "./commands/init.js";
+import { getPackageRoot, installPipeline, resolveProjectRoot } from "./commands/init.js";
 
 function isTruthy(value) {
     return ["1", "true", "yes"].includes(String(value ?? "").toLowerCase());
@@ -28,7 +28,7 @@ function shouldSkip(targetRoot, packageRoot) {
 }
 
 const packageRoot = getPackageRoot();
-const targetRoot = process.env.INIT_CWD || process.cwd();
+const targetRoot = resolveProjectRoot(process.env.INIT_CWD || process.cwd());
 const skipReason = shouldSkip(targetRoot, packageRoot);
 
 if (skipReason) {

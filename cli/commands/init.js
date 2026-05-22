@@ -10,6 +10,33 @@ export function getPackageRoot() {
     return path.resolve(path.dirname(filename), "../..");
 }
 
+function looksLikeMojibake(value) {
+    return /[ÃÂ�]/.test(value);
+}
+
+function decodeMojibake(value) {
+    if (!looksLikeMojibake(value)) {
+        return value;
+    }
+
+    try {
+        return Buffer.from(value, "latin1").toString("utf8");
+    } catch {
+        return value;
+    }
+}
+
+export function resolveProjectRoot(candidate = process.cwd()) {
+    const raw = path.resolve(candidate);
+    const decoded = path.resolve(decodeMojibake(raw));
+
+    if (decoded !== raw && fs.existsSync(decoded)) {
+        return decoded;
+    }
+
+    return raw;
+}
+
 function hasFlag(args, flag) {
     return args.includes(flag);
 }
@@ -18,6 +45,26 @@ function assertInsideRoot(root, target) {
     const relative = path.relative(root, target);
     if (relative.startsWith("..") || path.isAbsolute(relative)) {
         throw new Error(`Caminho fora do projeto alvo: ${target}`);
+    }
+}
+
+function copyDirectory(source, target, force) {
+    fs.mkdirSync(target, { recursive: true });
+
+    for (const entry of fs.readdirSync(source, { withFileTypes: true })) {
+        const sourceEntry = path.join(source, entry.name);
+        const targetEntry = path.join(target, entry.name);
+
+        if (entry.isDirectory()) {
+            copyDirectory(sourceEntry, targetEntry, force);
+            continue;
+        }
+
+        if (entry.isFile()) {
+            if (force || !fs.existsSync(targetEntry)) {
+                fs.copyFileSync(sourceEntry, targetEntry);
+            }
+        }
     }
 }
 
@@ -31,18 +78,27 @@ function copyPipelineItem(sourceRoot, targetRoot, item, force) {
 
     assertInsideRoot(targetRoot, target);
 
-    if (fs.existsSync(target)) {
-        if (!force) {
-            throw new Error(`Ja existe ${item}. Use --force para atualizar arquivos da pipeline.`);
+    if (fs.existsSync(target) && !force) {
+        const sourceStats = fs.statSync(source);
+        const targetStats = fs.statSync(target);
+
+        if (sourceStats.isDirectory() && targetStats.isDirectory()) {
+            copyDirectory(source, target, false);
+            return "merged";
         }
-        fs.rmSync(target, { recursive: true, force: true });
+
+        return "exists";
     }
 
-    fs.cpSync(source, target, { recursive: true });
-}
+    const sourceStats = fs.statSync(source);
 
-function findInstallConflicts(targetRoot) {
-    return PIPELINE_ITEMS.filter((item) => fs.existsSync(path.join(targetRoot, item)));
+    if (sourceStats.isDirectory()) {
+        copyDirectory(source, target, true);
+    } else {
+        fs.copyFileSync(source, target);
+    }
+
+    return force ? "updated" : "installed";
 }
 
 function runInitProject(targetRoot) {
@@ -89,29 +145,22 @@ function runInitProject(targetRoot) {
 
 export function installPipeline(options = {}) {
     const sourceRoot = options.sourceRoot ?? getPackageRoot();
-    const targetRoot = options.targetRoot ?? process.cwd();
+    const targetRoot = resolveProjectRoot(options.targetRoot ?? process.cwd());
     const force = options.force ?? false;
     const withDocs = options.withDocs ?? false;
-    const allowExisting = options.allowExisting ?? false;
     const quiet = options.quiet ?? false;
-    const conflicts = findInstallConflicts(targetRoot);
-    const allPipelineItemsExist = conflicts.length === PIPELINE_ITEMS.length;
-
-    if (conflicts.length > 0 && !force && !(allowExisting && allPipelineItemsExist)) {
-        throw new Error(`Ja existem arquivos da pipeline: ${conflicts.join(", ")}. Use --force para atualizar.`);
-    }
 
     for (const item of PIPELINE_ITEMS) {
-        if (allowExisting && !force && fs.existsSync(path.join(targetRoot, item))) {
-            if (!quiet) {
-                console.log(`Existe: ${item}`);
-            }
-            continue;
-        }
-
-        copyPipelineItem(sourceRoot, targetRoot, item, force);
+        const result = copyPipelineItem(sourceRoot, targetRoot, item, force);
         if (!quiet) {
-            console.log(`Instalado: ${item}`);
+            const label = {
+                exists: "Existe",
+                installed: "Instalado",
+                merged: "Preenchido",
+                updated: "Atualizado"
+            }[result] ?? "Instalado";
+
+            console.log(`${label}: ${item}`);
         }
     }
 
@@ -130,7 +179,6 @@ export async function initCommand(args = []) {
 
     installPipeline({
         force: hasFlag(args, "--force"),
-        withDocs,
-        allowExisting: withDocs
+        withDocs
     });
 }
